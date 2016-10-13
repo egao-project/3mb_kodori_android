@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:orientation="vertical">-->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-    <ImageView android:id="@+id/imageView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="#00ff00"/>
-    <Button android:id="@+id/button1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Take a picture!"/>
+<!--<FrameLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0px"-->
+    <!--android:layout_weight="1" >-->
+
+    <!--<com.egao_inc.kodori.kodori.FaceView-->
+        <!--android:id="@+id/faceView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+<!--</FrameLayout>-->
+<!--</LinearLayout>-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+    <com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay
+            android:id="@+id/faceOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview>
+
 </LinearLayout>
