@@ -6,9 +6,16 @@ package com.egao_inc.kodori.kodori;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.util.Log;
 
 import com.google.android.gms.vision.face.Face;
 import com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay;
+import com.google.android.gms.vision.face.Landmark;
+
+import java.util.List;
 
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
@@ -80,8 +87,6 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float x = translateX(face.getPosition().x + face.getWidth() / 2);
         float y = translateY(face.getPosition().y + face.getHeight() / 2);
 
-
-
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
         float yOffset = scaleY(face.getHeight() / 2.0f);
@@ -90,8 +95,56 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float right = x + xOffset;
         float bottom = y + yOffset;
 
+        Log.w("Face Position", "xOffset:" + xOffset +  " yOffset:" + yOffset + " left:" + left+ " top:" + top + " right:" + right + " bottom:" + bottom );
         canvas.drawText(mIsReady ? mReadyMessage : mNotReadyMessage, left, top - LABEL_Y_OFFSET, mPaint);
 
         canvas.drawRect(left, top, right, bottom, mPaint);
+
+        /*
+         getPosition() - 顔が検出された領域の左上の座標を返します。
+            getWidth() - 顔が検出された領域の幅を返します。
+            getHeight() - 顔が検出された領域の高さを返します。
+         */
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+
+        for (Landmark landmark : face.getLandmarks()) {
+            // TODO : 倍数は計算で求める
+            int cx = (int) (landmark.getPosition().x * 2.5);
+            int cy = (int) (landmark.getPosition().y * 2.5);
+            canvas.drawCircle(cx, cy, 10, paint);
+        }
+        /*
+        PointF facePoint = face.getPosition();
+        for (Landmark land : face.getLandmarks())
+        {
+            switch (land.getType())
+            {
+                case Landmark.LEFT_EYE:
+                    break;
+                case Landmark.LEFT_MOUTH:
+                    break;
+                case Landmark.RIGHT_EYE:
+                    break;
+                case Landmark.RIGHT_MOUTH:
+                    break;
+                case Landmark.NOSE_BASE:
+                    break;
+                default:
+                    break;
+            }
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            PointF p = land.getPosition();
+            canvas.drawRect(
+                    facePoint.x + p.x - 3,
+                    facePoint.y + p.y - 3,
+                    facePoint.x + p.x + 6,
+                    facePoint.y + p.y + 6,
+                    paint);
+        }
+        */
     }
 }

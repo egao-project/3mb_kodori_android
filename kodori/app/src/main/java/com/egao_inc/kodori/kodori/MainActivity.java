@@ -74,6 +74,11 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onClickShutter(View view) {
+        Log.w(TAG, "Face　shutter!!");
+        takeShot();
+    }
+
     /**
      * Handles the requesting of the camera permission.  This includes
      * showing a "Snackbar" message of why the permission is needed then
@@ -332,9 +337,10 @@ public final class MainActivity extends AppCompatActivity {
             if (isSmiling) {
                 float leftEye = face.getIsLeftEyeOpenProbability();
                 float rightEye = face.getIsRightEyeOpenProbability();
-                if (Math.abs(leftEye - rightEye) >= WINK_THRESHOLD) {
-                    takeShot();
-                }
+                Log.e(TAG, "log face leftEye" + leftEye + " rightEye" + rightEye);
+//                if (Math.abs(leftEye - rightEye) >= WINK_THRESHOLD) {
+//                    takeShot();
+//                }
             }
 
             mFaceGraphic.setIsReady(isSmiling);

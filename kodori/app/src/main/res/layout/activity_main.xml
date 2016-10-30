@@ -25,16 +25,22 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:onClick="onClickShutter"
+        android:src="@android:drawable/ic_menu_camera"/>
+
     <com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay
             android:id="@+id/faceOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview>
 
 </LinearLayout>
