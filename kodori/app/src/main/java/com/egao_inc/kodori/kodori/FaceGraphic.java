@@ -39,6 +39,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private final String mNotReadyMessage;
     private final String mReadyMessage;
 
+    private List<Landmark> langMarks;
+
     FaceGraphic(GraphicOverlay overlay) {
         super(overlay);
         mNotReadyMessage = overlay.getContext().getResources().getString(R.string.not_ready_message);
@@ -60,6 +62,9 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         mPaint.setColor(isValid ? VALID_COLOR : INVALID_COLOR);
     }
 
+    public List<Landmark> getLandmarks() {
+        return this.langMarks;
+    }
 
     /**
      * Updates the face instance from the detection of the most recent frame.  Invalidates the
@@ -110,7 +115,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
 
-        for (Landmark landmark : face.getLandmarks()) {
+        this.langMarks = face.getLandmarks();
+        for (Landmark landmark : this.langMarks) {
             // TODO : 倍数は計算で求める
             int cx = (int) (landmark.getPosition().x * 2.5);
             int cy = (int) (landmark.getPosition().y * 2.5);

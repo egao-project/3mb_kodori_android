@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,6 +17,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -26,9 +31,11 @@ import com.google.android.gms.vision.face.FaceDetector;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview;
 import com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay;
+import com.google.android.gms.vision.face.Landmark;
 
 /**
  * Activity for the face tracker app.  This app detects faces with the rear facing camera, and draws
@@ -37,6 +44,7 @@ import com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay;
  * それぞれの顔の位置、大きさ、およびIDを示すために、オーバーレイグラフィックスを描画
  */
 public final class MainActivity extends AppCompatActivity {
+
     private static final String TAG         = "FaceTracker";
 
     private CameraSource mCameraSource      = null;
@@ -128,8 +136,14 @@ public final class MainActivity extends AppCompatActivity {
                 .setProminentFaceOnly(true)
                 .build();
 
+//        detector.setProcessor(
+//                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+//                        .build());
+
+        GraphicFaceTrackerFactory faceFactory = new GraphicFaceTrackerFactory();
+        faceFactory.owner = this;
         detector.setProcessor(
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                new MultiProcessor.Builder<>(faceFactory)
                         .build());
 
         if (!detector.isOperational()) {
@@ -284,6 +298,57 @@ public final class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void  onUpdateLandmarks(List<Landmark> langMarks)
+    {
+
+        Log.e(TAG, "mainActivity onUpdateLandmarks");
+        for (Landmark land : langMarks)
+        {
+            String str;
+            switch (land.getType())
+            {
+                case Landmark.LEFT_EYE:
+                    str = "LEFT_EYE";
+                    break;
+                case Landmark.LEFT_MOUTH:
+                    str = "LEFT_MOUTH";
+                    break;
+                case Landmark.RIGHT_EYE:
+                    str = "RIGHT_EYE";
+                    break;
+                case Landmark.RIGHT_MOUTH:
+                    str = "RIGHT_MOUTH";
+                    break;
+                case Landmark.NOSE_BASE:
+                    str = "NOSE_BASE";
+                    break;
+                default:
+                    str = "default";
+                    break;
+            }
+
+            PointF p = land.getPosition();
+            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
+        }
+//        // Viewをのせる元になるレイアウトを配置 topLayout
+//        LinearLayout mainLayout = (LinearLayout) findViewById(R.id.topLayout);
+//// イメージビューの生成
+//        ImageView  mainImage = new ImageView(getApplicationContext());
+//
+////「eye3_left」という画像を設定
+//        mainImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.mouth));
+//
+////画像のサイズの設定（width=100,height=150）
+//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(100,150);
+//
+////表示座標の設定（x=200,y=250）
+//        lp.leftMargin = 200;
+//        lp.topMargin = 250;
+//
+//        //画像の表示
+//        mainLayout.addView(mainImage,lp);
+    }
+
     //==============================================================================================
     // Graphic Face Tracker
     //==============================================================================================
@@ -294,9 +359,14 @@ public final class MainActivity extends AppCompatActivity {
      * 顔トラッカーを作成するためのファクトリは、新しい顔に関連付けられます。
      */
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
+        public  MainActivity owner;
         @Override
-        public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
+        public Tracker<Face> create(Face face)
+        {
+//            return new GraphicFaceTracker(mGraphicOverlay);
+            GraphicFaceTracker graphicFaceTracker = new GraphicFaceTracker(mGraphicOverlay);
+            graphicFaceTracker.owner = owner;
+            return graphicFaceTracker;
         }
     }
 
@@ -307,6 +377,7 @@ public final class MainActivity extends AppCompatActivity {
      * これは顔グラフィックを保持
      */
     private class GraphicFaceTracker extends Tracker<Face> {
+        public  MainActivity owner;
         private static final double SMILING_THRESHOLD = 0.4;
         private static final double WINK_THRESHOLD = 0.5;
         private GraphicOverlay mOverlay;
@@ -345,6 +416,10 @@ public final class MainActivity extends AppCompatActivity {
 
             mFaceGraphic.setIsReady(isSmiling);
             mFaceGraphic.updateFace(face);
+
+            if (owner != null){
+                owner.onUpdateLandmarks(mFaceGraphic.getLandmarks());
+            }
         }
 
         /**
