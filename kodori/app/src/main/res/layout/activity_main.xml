@@ -56,6 +56,39 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
+    <HorizontalScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" >
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <!--　　　　<ImageButton-->
+            <!--android:id="@+id/mouseButton"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:onClick="onClickMouser"-->
+            <!--android:src="@drawable/mouth_01"/>-->
+
+            <Button
+                android:id="@+id/mouseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:onClick="onClickMouse"
+                android:text="@string/mouse_1"/>
+            <Button
+                android:id="@+id/clearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:onClick="onClickClear"
+                android:text="@string/clear"/>
+            </LinearLayout>
+    </HorizontalScrollView>
+
     <ImageButton
         android:id="@+id/imageButton1"
         android:layout_width="match_parent"
@@ -67,7 +100,7 @@
     <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview
             android:id="@+id/preview"
@@ -77,7 +110,7 @@
             <com.egao_inc.kodori.kodori.ui.camera.GraphicOverlay
                 android:id="@+id/faceOverlay"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
         </com.egao_inc.kodori.kodori.ui.camera.CameraSourcePreview>
 
         <ImageView
@@ -88,7 +121,4 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
-
-
 </LinearLayout>

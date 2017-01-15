@@ -6,4 +6,7 @@
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="not_ready_message">reading..</string>
     <string name="ready_message">Just wink now</string>
+
+    <string name="mouse_1">口</string>
+    <string name="clear">クリア</string>
 </resources>

@@ -56,6 +56,7 @@ public final class MainActivity extends AppCompatActivity {
     final Handler handler = new Handler();
     private static final int kTAG_MOUTH  = 200;
 
+    boolean isDispMouse = false;
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -82,13 +83,33 @@ public final class MainActivity extends AppCompatActivity {
         }
 
         // イメージを非表示
-        ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
-        imageView.setVisibility(View.GONE);
+        displayClear();
     }
 
+    /**
+     * on Click
+     */
     public void onClickShutter(View view) {
         Log.w(TAG, "Face　shutter!!");
-        takeShot();
+//        takeShot();
+    }
+    public void onClickMouse(View view) {
+        isDispMouse = !isDispMouse;
+    }
+    public void onClickClear(View view) {
+        isDispMouse = false;
+    }
+
+    private void setDispMouse(boolean isDisp)
+    {
+        ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+
+        if (isDispMouse)
+        {
+            imageView.setVisibility(isDisp ? View.VISIBLE : View.GONE);
+        }else {
+            imageView.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -304,8 +325,9 @@ public final class MainActivity extends AppCompatActivity {
 
     public void  onUpdateLandmarks(List<Landmark> langMarks)
     {
-        PointF mouthRightNosePoint = new PointF(0,0);
-        PointF mouthLeftNosePoint = new PointF(0,0);
+        PointF mouthRightMousePoint = new PointF(0,0);
+        PointF mouthLeftMousePoint = new PointF(0,0);
+
         for (Landmark land : langMarks)
         {
             String str;
@@ -315,7 +337,7 @@ public final class MainActivity extends AppCompatActivity {
                     str = "LEFT_EYE";
                     break;
                 case Landmark.LEFT_MOUTH:
-                    mouthLeftNosePoint = land.getPosition();
+                    mouthLeftMousePoint = land.getPosition();
                     str = "LEFT_MOUTH";
                     break;
                 case Landmark.RIGHT_EYE:
@@ -324,7 +346,7 @@ public final class MainActivity extends AppCompatActivity {
                 case Landmark.RIGHT_MOUTH:
                 {
                     str = "RIGHT_MOUTH";
-                    mouthRightNosePoint = land.getPosition();
+                    mouthRightMousePoint = land.getPosition();
                     // mouth_01
 
 
@@ -348,6 +370,22 @@ public final class MainActivity extends AppCompatActivity {
 //            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
         }
 
+        if ((mouthLeftMousePoint.x != 0 || mouthLeftMousePoint.y != 0) &&
+                (mouthRightMousePoint.x != 0 || mouthRightMousePoint.y != 0))
+        {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    //UI操作するコードをここに書く
+//                    ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+//                    imageView.setVisibility(View.VISIBLE);
+                    setDispMouse(true);
+                }
+            });
+
+
+            Log.e(TAG, "R.id.mouth_01 can got position!!");
+        }
 //        if (mouthRightNosePoint.x != 0 && mouthLeftNosePoint.x != 0)
 //        {
 //
@@ -368,6 +406,18 @@ public final class MainActivity extends AppCompatActivity {
 //            imageView.setTranslationY(mouthY - 140);
 
     }
+    public void displayClear()
+    {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+//                ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+//                imageView.setVisibility(View.GONE);
+                setDispMouse(false);
+            }
+        });
+    }
+
 
     //==============================================================================================
     // Graphic Face Tracker
@@ -451,6 +501,7 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void onMissing(FaceDetector.Detections<Face> detectionResults) {
             mOverlay.remove(mFaceGraphic);
+            if(owner != null){owner.displayClear();}
         }
 
         /**
@@ -460,8 +511,10 @@ public final class MainActivity extends AppCompatActivity {
          * オーバーレイからグラフィック注釈を削除します。
          */
         @Override
-        public void onDone() {
+        public void onDone()
+        {
             mOverlay.remove(mFaceGraphic);
+            if(owner != null){owner.displayClear();}
         }
 
     }
