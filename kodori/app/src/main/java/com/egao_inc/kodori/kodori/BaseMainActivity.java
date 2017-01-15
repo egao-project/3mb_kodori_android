@@ -51,6 +51,12 @@ public class BaseMainActivity extends AppCompatActivity{
     private static final int kTAG_MOUTH  = 200;
 
     boolean isDispMouse = false;
+    boolean isDispPanda = false;
+    boolean isDispFrog = false;
+
+    private static final int ITEM_MOUSE = 1;
+    private static final int ITEM_PANDA = 2;
+    private static final int ITEM_FROG = 3;
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -89,23 +95,289 @@ public class BaseMainActivity extends AppCompatActivity{
     public void onClickMouse(View view) {
         isDispMouse = !isDispMouse;
     }
+    public void onClickPanda(View view) {
+        isDispPanda = !isDispPanda;
+    }
+    public void onClickFlog(View view) {
+        isDispFrog = !isDispFrog;
+    }
     public void onClickClear(View view) {
         isDispMouse = false;
+        isDispPanda = false;
+        isDispFrog  = false;
     }
 
+    private ImageView getItem(int itemNum)
+    {
+        if (itemNum > 0)
+        {
+            switch (itemNum){
+                case ITEM_MOUSE:
+                    return (ImageView)findViewById(R.id.mouth_01);
+                case ITEM_PANDA:
+                    return (ImageView)findViewById(R.id.panda_01);
+                case ITEM_FROG:
+                    return (ImageView)findViewById(R.id.frog_01);
+                default:
+                    break;
+            }
+        }
+        return null;
+    }
+
+    private void setDispItem(int itemNum, boolean isDisp)
+    {
+        switch (itemNum){
+            case ITEM_MOUSE:
+                setDispMouse(isDisp);
+                break;
+            case ITEM_PANDA:
+                setDispPanda(isDisp);
+                break;
+            case ITEM_FROG:
+                setDispFrog(isDisp);
+            default:
+                break;
+        }
+    }
     /**
      * setDispMouse
      */
     private void setDispMouse(boolean isDisp)
     {
-        ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
-
-        if (isDispMouse)
+        ImageView imageView = getItem(ITEM_MOUSE);
+        if (imageView != null)
         {
-            imageView.setVisibility(isDisp ? View.VISIBLE : View.GONE);
-        }else {
-            imageView.setVisibility(View.GONE);
+            if (isDispMouse)
+            {
+                imageView.setVisibility(isDisp ? View.VISIBLE : View.GONE);
+            }else {
+                imageView.setVisibility(View.GONE);
+            }
         }
+    }
+    /**
+     * setDispPanda
+     */
+    private void setDispPanda(boolean isDisp)
+    {
+        ImageView imageView = getItem(ITEM_PANDA);
+        if (imageView != null)
+        {
+            if (isDispPanda)
+            {
+                imageView.setVisibility(isDisp ? View.VISIBLE : View.GONE);
+            }else {
+                imageView.setVisibility(View.GONE);
+            }
+        }
+    }
+    /**
+     * setDispFrog
+     */
+    private void setDispFrog(boolean isDisp)
+    {
+        ImageView imageView = getItem(ITEM_FROG);
+        if (imageView != null)
+        {
+            if (isDispFrog)
+            {
+                imageView.setVisibility(isDisp ? View.VISIBLE : View.GONE);
+            }else {
+                imageView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setMousePosition(PointF leftPoint, PointF rightPoint)
+    {
+        Log.e(TAG, "---------------------------");
+        Log.e(TAG, "Mouse: right x =" + rightPoint.x + " left x:" + leftPoint.x );
+        Log.e(TAG, "Mouse: right y =" + rightPoint.y + " left y:" + leftPoint.y );
+        Log.e(TAG, "---------------------------");
+        ImageView imageView = getItem(ITEM_MOUSE);
+        if (imageView != null)
+        {
+            Log.e(TAG, "current -> Mouse x =" + imageView.getTranslationX());
+            float mouseWidht = leftPoint.x - rightPoint.x;
+            float mouseScale = mouseWidht / imageView.getWidth() * 2.5f;
+            imageView.setScaleX(mouseScale);
+            imageView.setScaleY(mouseScale);
+            Log.e(TAG, "current -> Mouse scale =" + mouseScale);
+            float mouseX = mouseWidht + rightPoint.x - (leftPoint.x / 2);
+            imageView.setX(mouseX * 2.5f);
+            float mouseY = (leftPoint.y - rightPoint.y) + rightPoint.y;
+            imageView.setY(mouseY);
+        }
+
+
+
+    }
+
+    private void setPandaPosition(PointF point)
+    {
+//        Log.e(TAG, "---------------------------");
+//        Log.e(TAG, "Mouse: right x =" + rightPoint.x + " left x:" + leftPoint.x );
+//        Log.e(TAG, "Mouse: right y =" + rightPoint.y + " left y:" + leftPoint.y );
+//        Log.e(TAG, "---------------------------");
+        ImageView imageView = getItem(ITEM_PANDA);
+        if (imageView != null)
+        {
+//        imageView.setTranslationX(mouseX);
+            imageView.setX(point.x);
+            imageView.setY(point.y);
+        }
+
+
+    }
+
+    private void setFrogPosition(PointF point)
+    {
+//        Log.e(TAG, "---------------------------");
+//        Log.e(TAG, "Mouse: right x =" + rightPoint.x + " left x:" + leftPoint.x );
+//        Log.e(TAG, "Mouse: right y =" + rightPoint.y + " left y:" + leftPoint.y );
+//        Log.e(TAG, "---------------------------");
+        ImageView imageView = getItem(ITEM_FROG);
+        if (imageView != null)
+        {
+//        imageView.setTranslationX(mouseX);
+            imageView.setX(point.x);
+            imageView.setY(point.y);
+        }
+
+
+    }
+
+    /**
+     * onUpdateLandmarks
+     */
+    public void  onUpdateLandmarks(List<Landmark> langMarks)
+    {
+        PointF mouthRightMousePoint = new PointF(0,0);
+        PointF mouthLeftMousePoint = new PointF(0,0);
+        PointF mouthNosePoint = new PointF(0,0);
+
+        // TODO : ここの処理はクラスにしたい
+        for (Landmark land : langMarks)
+        {
+            String str;
+            switch (land.getType())
+            {
+                case Landmark.LEFT_EYE:
+                    str = "LEFT_EYE";
+                    break;
+                case Landmark.LEFT_MOUTH:
+                    mouthLeftMousePoint = land.getPosition();
+                    str = "LEFT_MOUTH";
+                    break;
+                case Landmark.RIGHT_EYE:
+                    str = "RIGHT_EYE";
+                    break;
+                case Landmark.RIGHT_MOUTH:
+                {
+                    str = "RIGHT_MOUTH";
+                    mouthRightMousePoint = land.getPosition();
+                    // mouth_01
+
+
+
+//                    Log.e(TAG, "imageViewMouth = x:" + imageView.getTranslationX() + " y:" + imageView.getTranslationY());
+
+//                    Log.e(TAG, "type =" + str + " x:" + mouthNosePoint.x + " y:" + mouthNosePoint.y);
+                    // log type =RIGHT_MOUTH x:92.31844 y:284.27118
+                }
+
+                break;
+                case Landmark.NOSE_BASE:
+                {
+                    mouthNosePoint = land.getPosition();
+                    str = "NOSE_BASE";
+                }
+                    break;
+                default:
+                    str = "default";
+                    break;
+            }
+
+//            PointF p = land.getPosition();
+//            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
+        }
+
+        // TODO : ここは別メソッドで位置情報を渡し、その先でアイテムの表示切り替えを行う
+        if ((mouthLeftMousePoint.x != 0 || mouthLeftMousePoint.y != 0) &&
+                (mouthRightMousePoint.x != 0 || mouthRightMousePoint.y != 0))
+        {
+            final PointF mouseLeft = mouthLeftMousePoint;
+            final PointF mouseRight = mouthRightMousePoint;
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    setMousePosition(mouseLeft, mouseRight);
+                    setDispMouse(true);
+                }
+            });
+        }else {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    setDispMouse(false);
+                }
+            });
+        }
+
+        // setPandaPosition mouthNosePoint
+        if (mouthNosePoint.x != 0 || mouthNosePoint.y != 0)
+        {
+            final PointF nosePoint = mouthNosePoint;
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    setPandaPosition(nosePoint);
+                    setDispPanda(true);
+                    setFrogPosition(nosePoint);
+                    setDispFrog(true);
+                }
+            });
+        }else {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    setDispPanda(false);
+                    setDispFrog(false);
+                }
+            });
+        }
+
+//        if (mouthRightNosePoint.x != 0 && mouthLeftNosePoint.x != 0)
+//        {
+//
+//        }
+
+//        //画像の表示
+//            Log.e(TAG, "right x =" + mouthRightNosePoint.x + " left x:" + mouthLeftNosePoint.x );
+//            float mouthWidth = mouthLeftNosePoint.x - mouthRightNosePoint.x;
+//            float mouthX = mouthRightNosePoint.x + mouthWidth / 2;
+//            float mouthY = mouthRightNosePoint.y + (mouthLeftNosePoint.y - mouthRightNosePoint.y) / 2;
+//            ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+//
+//            float imageScale = mouthWidth / imageView.getWidth();
+//            Log.e(TAG, "mouth width=" + mouthWidth + " resources width=:" + imageView.getWidth() + " scale:" + imageScale );
+//            imageView.setScaleX(imageScale);
+//            imageView.setScaleY(imageScale);
+//            imageView.setTranslationX(mouthX -250);
+//            imageView.setTranslationY(mouthY - 140);
+
+    }
+
+    /**
+     * displayClear
+     */
+    public void displayClear()
+    {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                setDispMouse(false);
+                setDispPanda(false);
+                setDispFrog(false);
+            }
+        });
     }
 
     /**
@@ -316,97 +588,6 @@ public class BaseMainActivity extends AppCompatActivity{
             }
         });
     }
-
-    public void  onUpdateLandmarks(List<Landmark> langMarks)
-    {
-        PointF mouthRightMousePoint = new PointF(0,0);
-        PointF mouthLeftMousePoint = new PointF(0,0);
-
-        for (Landmark land : langMarks)
-        {
-            String str;
-            switch (land.getType())
-            {
-                case Landmark.LEFT_EYE:
-                    str = "LEFT_EYE";
-                    break;
-                case Landmark.LEFT_MOUTH:
-                    mouthLeftMousePoint = land.getPosition();
-                    str = "LEFT_MOUTH";
-                    break;
-                case Landmark.RIGHT_EYE:
-                    str = "RIGHT_EYE";
-                    break;
-                case Landmark.RIGHT_MOUTH:
-                {
-                    str = "RIGHT_MOUTH";
-                    mouthRightMousePoint = land.getPosition();
-                    // mouth_01
-
-
-
-//                    Log.e(TAG, "imageViewMouth = x:" + imageView.getTranslationX() + " y:" + imageView.getTranslationY());
-
-//                    Log.e(TAG, "type =" + str + " x:" + mouthNosePoint.x + " y:" + mouthNosePoint.y);
-                    // log type =RIGHT_MOUTH x:92.31844 y:284.27118
-                }
-
-                break;
-                case Landmark.NOSE_BASE:
-                    str = "NOSE_BASE";
-                    break;
-                default:
-                    str = "default";
-                    break;
-            }
-
-//            PointF p = land.getPosition();
-//            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
-        }
-
-        if ((mouthLeftMousePoint.x != 0 || mouthLeftMousePoint.y != 0) &&
-                (mouthRightMousePoint.x != 0 || mouthRightMousePoint.y != 0))
-        {
-            runOnUiThread(new Runnable() {
-
-                public void run() {
-                    setDispMouse(true);
-                }
-            });
-
-
-            Log.e(TAG, "R.id.mouth_01 can got position!!");
-        }
-//        if (mouthRightNosePoint.x != 0 && mouthLeftNosePoint.x != 0)
-//        {
-//
-//        }
-
-//        //画像の表示
-//            Log.e(TAG, "right x =" + mouthRightNosePoint.x + " left x:" + mouthLeftNosePoint.x );
-//            float mouthWidth = mouthLeftNosePoint.x - mouthRightNosePoint.x;
-//            float mouthX = mouthRightNosePoint.x + mouthWidth / 2;
-//            float mouthY = mouthRightNosePoint.y + (mouthLeftNosePoint.y - mouthRightNosePoint.y) / 2;
-//            ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
-//
-//            float imageScale = mouthWidth / imageView.getWidth();
-//            Log.e(TAG, "mouth width=" + mouthWidth + " resources width=:" + imageView.getWidth() + " scale:" + imageScale );
-//            imageView.setScaleX(imageScale);
-//            imageView.setScaleY(imageScale);
-//            imageView.setTranslationX(mouthX -250);
-//            imageView.setTranslationY(mouthY - 140);
-
-    }
-    public void displayClear()
-    {
-        runOnUiThread(new Runnable() {
-
-            public void run() {
-                setDispMouse(false);
-            }
-        });
-    }
-
 
     //==============================================================================================
     // Graphic Face Tracker

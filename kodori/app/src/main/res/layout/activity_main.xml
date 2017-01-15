@@ -81,6 +81,18 @@
                 android:onClick="onClickMouse"
                 android:text="@string/mouse_1"/>
             <Button
+                android:id="@+id/pandaButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:onClick="onClickPanda"
+                android:text="@string/panda_1"/>
+            <Button
+                android:id="@+id/flogButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:onClick="onClickFlog"
+                android:text="@string/frog_01"/>
+            <Button
                 android:id="@+id/clearButton"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -117,8 +129,22 @@
             android:id="@+id/mouth_01"
             android:src="@drawable/mouth_01"
             android:scaleType="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/panda_01"
+            android:src="@drawable/panda_01"
+            android:scaleType="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/frog_01"
+            android:src="@drawable/frog_01"
+            android:scaleType="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </FrameLayout>
 </LinearLayout>

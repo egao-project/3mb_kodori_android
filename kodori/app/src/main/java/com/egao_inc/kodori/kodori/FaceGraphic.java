@@ -122,6 +122,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
             int cy = (int) (landmark.getPosition().y * 2.5);
             canvas.drawCircle(cx, cy, 10, paint);
         }
+
         /*
         PointF facePoint = face.getPosition();
         for (Landmark land : face.getLandmarks())

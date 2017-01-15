@@ -8,5 +8,7 @@
     <string name="ready_message">Just wink now</string>
 
     <string name="mouse_1">口</string>
+    <string name="panda_1">パンダ</string>
+    <string name="frog_01">カエル</string>
     <string name="clear">クリア</string>
 </resources>
