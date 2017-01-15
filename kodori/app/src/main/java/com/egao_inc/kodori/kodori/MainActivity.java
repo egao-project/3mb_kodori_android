@@ -8,19 +8,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
@@ -56,6 +53,9 @@ public final class MainActivity extends AppCompatActivity {
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
+    final Handler handler = new Handler();
+    private static final int kTAG_MOUTH  = 200;
+
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -80,6 +80,10 @@ public final class MainActivity extends AppCompatActivity {
         } else {
             requestCameraPermission();
         }
+
+        // イメージを非表示
+        ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+        imageView.setVisibility(View.GONE);
     }
 
     public void onClickShutter(View view) {
@@ -300,8 +304,8 @@ public final class MainActivity extends AppCompatActivity {
 
     public void  onUpdateLandmarks(List<Landmark> langMarks)
     {
-
-        Log.e(TAG, "mainActivity onUpdateLandmarks");
+        PointF mouthRightNosePoint = new PointF(0,0);
+        PointF mouthLeftNosePoint = new PointF(0,0);
         for (Landmark land : langMarks)
         {
             String str;
@@ -311,13 +315,26 @@ public final class MainActivity extends AppCompatActivity {
                     str = "LEFT_EYE";
                     break;
                 case Landmark.LEFT_MOUTH:
+                    mouthLeftNosePoint = land.getPosition();
                     str = "LEFT_MOUTH";
                     break;
                 case Landmark.RIGHT_EYE:
                     str = "RIGHT_EYE";
                     break;
                 case Landmark.RIGHT_MOUTH:
+                {
                     str = "RIGHT_MOUTH";
+                    mouthRightNosePoint = land.getPosition();
+                    // mouth_01
+
+
+
+//                    Log.e(TAG, "imageViewMouth = x:" + imageView.getTranslationX() + " y:" + imageView.getTranslationY());
+
+//                    Log.e(TAG, "type =" + str + " x:" + mouthNosePoint.x + " y:" + mouthNosePoint.y);
+                    // log type =RIGHT_MOUTH x:92.31844 y:284.27118
+                }
+
                     break;
                 case Landmark.NOSE_BASE:
                     str = "NOSE_BASE";
@@ -327,26 +344,29 @@ public final class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            PointF p = land.getPosition();
-            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
+//            PointF p = land.getPosition();
+//            Log.e(TAG, "type =" + str + " x:" + p.x + " y:" + p.y);
         }
-//        // Viewをのせる元になるレイアウトを配置 topLayout
-//        LinearLayout mainLayout = (LinearLayout) findViewById(R.id.topLayout);
-//// イメージビューの生成
-//        ImageView  mainImage = new ImageView(getApplicationContext());
+
+//        if (mouthRightNosePoint.x != 0 && mouthLeftNosePoint.x != 0)
+//        {
 //
-////「eye3_left」という画像を設定
-//        mainImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.mouth));
-//
-////画像のサイズの設定（width=100,height=150）
-//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(100,150);
-//
-////表示座標の設定（x=200,y=250）
-//        lp.leftMargin = 200;
-//        lp.topMargin = 250;
-//
+//        }
+
 //        //画像の表示
-//        mainLayout.addView(mainImage,lp);
+//            Log.e(TAG, "right x =" + mouthRightNosePoint.x + " left x:" + mouthLeftNosePoint.x );
+//            float mouthWidth = mouthLeftNosePoint.x - mouthRightNosePoint.x;
+//            float mouthX = mouthRightNosePoint.x + mouthWidth / 2;
+//            float mouthY = mouthRightNosePoint.y + (mouthLeftNosePoint.y - mouthRightNosePoint.y) / 2;
+//            ImageView imageView = (ImageView)findViewById(R.id.mouth_01);
+//
+//            float imageScale = mouthWidth / imageView.getWidth();
+//            Log.e(TAG, "mouth width=" + mouthWidth + " resources width=:" + imageView.getWidth() + " scale:" + imageScale );
+//            imageView.setScaleX(imageScale);
+//            imageView.setScaleY(imageScale);
+//            imageView.setTranslationX(mouthX -250);
+//            imageView.setTranslationY(mouthY - 140);
+
     }
 
     //==============================================================================================
